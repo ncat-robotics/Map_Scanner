@@ -120,7 +120,16 @@ warped = perspective_transform(original, screen_contours.reshape(4,2)* ratio)
 print('applying perspective transform')
 
 
-predictions = model.predict(warped)
+
+
+name = args['image'][:len(args['image'])-4]
+filename = name+'_scanned.jpg'
+cv2.imwrite(filename, warped)
+print('saved scan: {}'.format(filename))
+
+image2 = cv2.imread(r'C:\Users\estde\Documents\Object Detection\Out_scanned.jpg')
+
+predictions = model.predict(image2)
 labels, boxes, scores = predictions
 thresh=0.5
 filtered_indices=np.where(scores>thresh)
@@ -128,12 +137,7 @@ filtered_scores=scores[filtered_indices]
 filtered_boxes=boxes[filtered_indices]
 num_list = filtered_indices[0].tolist()
 filtered_labels = [labels[i] for i in num_list]
-#newwarp = show_labeled_image(warped,filtered_boxes,filtered_labels)
-
-name = args['image'][:len(args['image'])-4]
-filename = name+'_scanned.jpg'
-cv2.imwrite(filename, warped)
-print('saved scan: {}'.format(filename))
+newwarp = show_labeled_image(image2,filtered_boxes,filtered_labels)
 
 objs = []
 for i in  filtered_boxes:
